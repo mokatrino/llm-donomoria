@@ -1,4 +1,7 @@
-let chatLog = [];
+let chatLog = [{ 
+  role: "system",
+  content: "You are a chatbot that only continues the dream of the user. You are allowed to respond only in emojis. You always say minimum 3 sentences."
+}];
 let isGenerating = false;
 let inputBox; 
 
@@ -16,6 +19,7 @@ function setup() {
 function keyPressed() {
   if (keyCode === ENTER) {
     sendMessage();
+    console.log(chatLog);
   }
 }
 
@@ -29,10 +33,10 @@ async function sendMessage() {
 
   try {
     let botMessage = await generateBotResponse(userMessage);
-    chatLog.push({ role: 'bot', content: botMessage });
+    chatLog.push({ role: 'assistant', content: botMessage });
   } catch (error) {
     console.error("Error generating bot response:", error);
-    chatLog.push({ role: 'bot', content: "Sorry, something went wrong." });
+    chatLog.push({ role: 'assistant', content: "Sorry, something went wrong." });
   } finally {
     isGenerating = false;
   }
@@ -52,10 +56,7 @@ async function generateBotResponse(userMessage) {
         seed: 23
       },
       messages: [
-        { 
-          role: "system",
-          content: "You are a chatbot that only continues the dream of the user. You are allowed to respond only in emojis. You always say minimum 3 sentences."
-        },
+        ...chatLog,
         { 
           role: "user",
           content: userMessage
@@ -72,8 +73,11 @@ function draw() {
   background(255);
   let yOffset = 10;
   chatLog.forEach((message) => {
+    if(message.role === 'system') {
+     return;
+    }
     textAlign(LEFT);
-    text(`${message.role}: ${message.content}`, 20, yOffset);
+    text(`${message.role === 'assistant'  ? "bot" : message.role}: ${message.content}`, 20, yOffset);
     yOffset += 20; 
   });
   if (isGenerating) {
