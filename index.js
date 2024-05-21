@@ -1,9 +1,10 @@
 let chatLog = [{ 
   role: "system",
-  content: "You are a chatbot that only continues the dream of the user. You are allowed to respond only in emojis. You always say minimum 3 sentences."
+  content: "You are a chatbot that only continues the dream of the user. You are allowed to answer only in emojis. The answer should contain minimum 10 symbols. "
 }];
 let isGenerating = false;
 let inputBox; 
+let tryAgainButton;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -14,6 +15,10 @@ function setup() {
   
   inputBox = createInput();
   inputBox.position(20, height - 40);
+  
+  tryAgainButton = createButton('Try Again');
+  tryAgainButton.position(200, height - 40);
+  tryAgainButton.mousePressed(restartPage);
 }
 
 function keyPressed() {
@@ -74,7 +79,7 @@ function draw() {
   let yOffset = 10;
   chatLog.forEach((message) => {
     if(message.role === 'system') {
-     return;
+      return;
     }
     textAlign(LEFT);
     text(`${message.role === 'assistant'  ? "bot" : message.role}: ${message.content}`, 20, yOffset);
@@ -88,4 +93,8 @@ function draw() {
 
 function getInputValue() {
   return inputBox.value();
+}
+
+function restartPage() {
+  location.reload();
 }
