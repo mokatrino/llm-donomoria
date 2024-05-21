@@ -1,70 +1,87 @@
-/**
- * This is a simple example of how you can import
- * the ollama sdk and work with that
- * import ollama from "https://esm.sh/ollama/browser"
- * add the code below to your buttons click event listener
- * const respone = await ollama.chat({messages: [{role: 'user', content: 'What is the capital of the United States?'}]});
- * console.log(response);
- */
-// ----------------------------
-/**
- * There might be another way. The platform val.town
- * allows free requests to openai api. https://www.val.town/v/std/openai
- * Limits are:
- * - Usage Quota: We limit each user to 10 requests per minute.
- * - Features: Chat completions is the only endpoint available.
- * - There is no streaming support
- *
- * This might be enough for our usecase.
- * Do make this easier @ff6347 wrote this simple wrapper class
- * that you can use to interact with val.town openai api
- * mimicing the ollama sdk.
- * It is an esm module so you need to include type="module" in your script tag
- * <script type="module" src="index.js"></script>
- */
+let chatLog = [];
+let isGenerating = false;
+let inputBox; 
 
-// import the wrapper class
-import { LLM } from './llm.js';
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  console.log('👋 Hello! Type a message and press Enter to chat.');
+  textAlign(LEFT, TOP);
+  textSize(16);
+  fill(0);
+  
+  inputBox = createInput();
+  inputBox.position(20, height - 40);
+}
 
-// create an instance of the class
-// you need to insert the run url for your val.town openai api
-// @ff6347 will instruct you on how to get this
+function keyPressed() {
+  if (keyCode === ENTER) {
+    sendMessage();
+  }
+}
 
-const llm = new LLM({
-  host: '<insert run url for your val.town openai api here>',
-});
+async function sendMessage() {
+  let userMessage = getInputValue();
+  if (userMessage === '') return;
 
-// get the button#run element from the index.html
-const chatButton = document.getElementById('run');
-
-// add a click event listener to the button that runs the async function
-chatButton.addEventListener('click', async () => {
-  // some options for the chat
-  const format = 'json'; // we want json output
-  // we set the seed so we get always the same output
-  // we set the temperature which controls the creativity of the model
-  const options = {
-    seed: 42,
-    temperature: 0.5,
-  };
-  // the messages that we want to send to the model
-  // allowed are 'system', 'assistant' and 'user' role for the messages
-  const messages = [
-    {
-      role: 'system',
-      content:
-        'You are a helpful assistant. Always repond in JSON and only JSON',
-    },
-    { role: 'user', content: 'What is the capital of the United States?' },
-  ];
+  chatLog.push({ role: 'user', content: userMessage });
+  inputBox.value('');
+  isGenerating = true;
 
   try {
-    // now we make the call to the api.
-    // we wrap it in a try catch block to catch any errors
-    const response = await llm.chat({ format, options, messages });
-    console.log(response);
+    let botMessage = await generateBotResponse(userMessage);
+    chatLog.push({ role: 'bot', content: botMessage });
   } catch (error) {
-    // we had an error lets handle it
-    console.error(error);
+    console.error("Error generating bot response:", error);
+    chatLog.push({ role: 'bot', content: "Sorry, something went wrong." });
+  } finally {
+    isGenerating = false;
   }
-});
+}
+
+async function generateBotResponse(userMessage) {
+  let response = await fetch('http://localhost:11434/api/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: "llama3",
+      stream: false,
+      options: {
+        temperature: 0.1,
+        seed: 23
+      },
+      messages: [
+        { 
+          role: "system",
+          content: "You are a chatbot that only continues the dream of the user. You are allowed to respond only in emojis. You always say minimum 3 sentences."
+        },
+        { 
+          role: "user",
+          content: userMessage
+        }
+      ]
+    })
+  });
+  let data = await response.json();
+
+  return data.message.content;
+}
+
+function draw() {
+  background(255);
+  let yOffset = 10;
+  chatLog.forEach((message) => {
+    textAlign(LEFT);
+    text(`${message.role}: ${message.content}`, 20, yOffset);
+    yOffset += 20; 
+  });
+  if (isGenerating) {
+    textAlign(CENTER);
+    text("Bot is typing...", width / 2, height - 80);
+  }
+}
+
+function getInputValue() {
+  return inputBox.value();
+}
