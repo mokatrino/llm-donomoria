@@ -52,7 +52,7 @@ function setup() {
   tryAgainButton.style('border-radius', '5px');
   tryAgainButton.style('cursor', 'pointer');
   tryAgainButton.style('transition', 'background-color 0.3s ease');
-  tryAgainButton.hide(); // Initially hide the button
+  tryAgainButton.hide(); 
   tryAgainButton.mousePressed(restartPage);
 }
 
@@ -77,8 +77,8 @@ async function sendMessage() {
     if (messageCounter === nextSpecialResponse) {
       botMessage = getRandomDreamDescription();
       nextSpecialResponse += getRandomInt(4, 6); 
-      tryAgainButton.show(); // Show the button when the bot describes its dream
-      inputBox.hide(); // Hide the input box when the bot describes its dream
+      tryAgainButton.show(); 
+      inputBox.hide(); 
     } else {
       botMessage = await generateBotResponse(userMessage);
     }
