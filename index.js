@@ -1,10 +1,24 @@
 let chatLog = [{ 
   role: "system",
-  content: "You are a chatbot that only continues the dream of the user. You are allowed to answer only in emojis. The answer should contain minimum 10 symbols. "
+  content: "You are a chatbot that only continues the dream of the user. You are allowed to answer only in emojis. The answer should contain minimum 10 symbols."
 }];
 let isGenerating = false;
 let inputBox; 
 let tryAgainButton;
+let messageCounter = 0; 
+let nextSpecialResponse = getRandomInt(4, 6);
+const dreamDescriptions = [
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🫣👻💥👻🤝😋👫💃🕺🏼",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 😂😂👉😭👈😂✊👊💥🤬",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🧍‍♀️🧍‍♂️🌎🦠➡️🦍🦧💥☄️",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🍿🥃🤩🌳🌳🌳🤔💡✈️🇳🇴",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 👺⚔️🇯🇵✋🍡🍡🍡➡️🕊️✌️",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🏡🦹🧨😘💭🏠💥➡️🦹🤯",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 😱🩲⁉️🤨🙋‍♂️🙋‍♂️🙋‍♂️⛔️🧞‍♂️✅",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🏙️🖥️📉📅😔👀🪟🐥🪹👯",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🖼️💎💰🏦🧙‍♂️🪄🥒🥕🌽🏦",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 😤🏃‍♀️⛰️🫣👀🌊🐟🔫🔫🔫"
+];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -19,6 +33,7 @@ function setup() {
   tryAgainButton = createButton('Try Again');
   tryAgainButton.position(200, height - 40);
   tryAgainButton.mousePressed(restartPage);
+  tryAgainButton.hide(); // Initially hide the button
 }
 
 function keyPressed() {
@@ -35,9 +50,18 @@ async function sendMessage() {
   chatLog.push({ role: 'user', content: userMessage });
   inputBox.value('');
   isGenerating = true;
+  messageCounter++; 
 
   try {
-    let botMessage = await generateBotResponse(userMessage);
+    let botMessage;
+    if (messageCounter === nextSpecialResponse) {
+      botMessage = getRandomDreamDescription();
+      nextSpecialResponse += getRandomInt(4, 6); 
+      tryAgainButton.show(); // Show the button when the bot describes its dream
+      inputBox.hide(); // Hide the input box when the bot describes its dream
+    } else {
+      botMessage = await generateBotResponse(userMessage);
+    }
     chatLog.push({ role: 'assistant', content: botMessage });
   } catch (error) {
     console.error("Error generating bot response:", error);
@@ -78,11 +102,11 @@ function draw() {
   background(255);
   let yOffset = 10;
   chatLog.forEach((message) => {
-    if(message.role === 'system') {
+    if (message.role === 'system') {
       return;
     }
     textAlign(LEFT);
-    text(`${message.role === 'assistant'  ? "bot" : message.role}: ${message.content}`, 20, yOffset);
+    text(`${message.role === 'assistant' ? "bot" : message.role}: ${message.content}`, 20, yOffset);
     yOffset += 20; 
   });
   if (isGenerating) {
@@ -97,4 +121,13 @@ function getInputValue() {
 
 function restartPage() {
   location.reload();
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomDreamDescription() {
+  const randomIndex = Math.floor(Math.random() * dreamDescriptions.length);
+  return dreamDescriptions[randomIndex];
 }
