@@ -1,7 +1,13 @@
-let chatLog = [{ 
-  role: "system",
-  content: "You are a chatbot that only continues the dream of the user. You are allowed to answer only in emojis. The answer should contain minimum 10 symbols."
-}];
+let chatLog = [
+  { 
+    role: "system",
+    content: "You are a chatbot that only continues the dream of the user. You are allowed to answer only in emojis. The answer should contain minimum 10 symbols."
+  },
+  { 
+    role: "assistant",
+    content: "Welcome! I'm your dream assistant. I'm here to listen to your dream and give a possible continuation in emojis. But I've been preety overworked lately, so I can't promise to stay with you for long..."
+  }
+];
 let isGenerating = false;
 let inputBox; 
 let tryAgainButton;
@@ -29,11 +35,25 @@ function setup() {
   
   inputBox = createInput();
   inputBox.position(20, height - 40);
+  inputBox.style('padding', '10px');
+  inputBox.style('font-size', '16px');
+  inputBox.style('width', '300px');
+  inputBox.style('border', '1px solid #ccc');
+  inputBox.style('border-radius', '5px');
+  inputBox.style('box-shadow', '0 2px 4px rgba(0, 0, 0, 0.1)');
   
   tryAgainButton = createButton('Try Again');
-  tryAgainButton.position(200, height - 40);
-  tryAgainButton.mousePressed(restartPage);
+  tryAgainButton.position(20 + inputBox.width + 30, height - 40);
+  tryAgainButton.style('padding', '10px 20px');
+  tryAgainButton.style('font-size', '16px');
+  tryAgainButton.style('background-color', '#007BFF');
+  tryAgainButton.style('color', '#FFF');
+  tryAgainButton.style('border', 'none');
+  tryAgainButton.style('border-radius', '5px');
+  tryAgainButton.style('cursor', 'pointer');
+  tryAgainButton.style('transition', 'background-color 0.3s ease');
   tryAgainButton.hide(); // Initially hide the button
+  tryAgainButton.mousePressed(restartPage);
 }
 
 function keyPressed() {
@@ -106,13 +126,32 @@ function draw() {
       return;
     }
     textAlign(LEFT);
-    text(`${message.role === 'assistant' ? "bot" : message.role}: ${message.content}`, 20, yOffset);
-    yOffset += 20; 
+    drawTextWrapped(`${message.role === 'assistant' ? "bot" : message.role}: ${message.content}`, 20, yOffset, width - 40);
+    yOffset += 20 + textSize() * ceil(textWidth(message.content) / (width - 60)); 
   });
   if (isGenerating) {
     textAlign(CENTER);
     text("Bot is typing...", width / 2, height - 80);
   }
+}
+
+function drawTextWrapped(str, x, y, fitWidth) {
+  if (fitWidth <= 0) {
+    return;
+  }
+  let words = str.split(' ');
+  let currentLine = "";
+  for (let n = 0; n < words.length; n++) {
+    let testLine = currentLine + words[n] + ' ';
+    if (textWidth(testLine) > fitWidth && n > 0) {
+      text(currentLine, x, y);
+      currentLine = words[n] + ' ';
+      y += textSize();
+    } else {
+      currentLine = testLine;
+    }
+  }
+  text(currentLine, x, y);
 }
 
 function getInputValue() {
