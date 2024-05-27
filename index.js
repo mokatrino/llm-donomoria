@@ -27,23 +27,28 @@ const dreamDescriptions = [
 ];
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  let canvasWidth = windowWidth * 0.7;
+  let canvasHeight = windowHeight;
+  
+  let canvas = createCanvas(canvasWidth, canvasHeight);
+  canvas.style('display', 'block');
+  canvas.style('margin', '0 auto');
   console.log('👋 Hello! Type a message and press Enter to chat.');
   textAlign(LEFT, TOP);
   textSize(16);
-  fill(0);
-  
+  fill(0);  
   inputBox = createInput();
-  inputBox.position(20, height - 40);
+  inputBox.attribute('placeholder', 'Type your dream')
+  inputBox.style('width', '70%');
   inputBox.style('padding', '10px');
+  inputBox.position((windowWidth - inputBox.width) / 2, (height - inputBox.height-200));
   inputBox.style('font-size', '16px');
-  inputBox.style('width', '300px');
   inputBox.style('border', '1px solid #ccc');
   inputBox.style('border-radius', '5px');
   inputBox.style('box-shadow', '0 2px 4px rgba(0, 0, 0, 0.1)');
   
   tryAgainButton = createButton('Try Again');
-  tryAgainButton.position(20 + inputBox.width + 30, height - 40);
+  tryAgainButton.position((width - inputBox.width) / 2 + inputBox.width + 30, (height - 40));
   tryAgainButton.style('padding', '10px 20px');
   tryAgainButton.style('font-size', '16px');
   tryAgainButton.style('background-color', '#007BFF');
@@ -125,13 +130,19 @@ function draw() {
     if (message.role === 'system') {
       return;
     }
-    textAlign(LEFT);
-    drawTextWrapped(`${message.role === 'assistant' ? "bot" : message.role}: ${message.content}`, 20, yOffset, width - 40);
-    yOffset += 20 + textSize() * ceil(textWidth(message.content) / (width - 60)); 
+    if (message.role === 'assistant') {
+      textAlign(LEFT);
+      drawTextWrapped(`bot: ${message.content}`, 20, yOffset, width / 2 - 40);
+    } else if (message.role === 'user') {
+      textAlign(RIGHT);
+      drawTextWrapped(`user: ${message.content}`, width - 20, yOffset, width / 2 - 40);
+    }
+    yOffset += 20 + textSize() * ceil(textWidth(message.content) / (width / 2 - 40));
+ 
   });
   if (isGenerating) {
     textAlign(CENTER);
-    text("Bot is typing...", width / 2, height - 80);
+    text("Bot is typing...", width / 2, height - 180);
   }
 }
 
