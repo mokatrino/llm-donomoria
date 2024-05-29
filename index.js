@@ -23,7 +23,17 @@ const dreamDescriptions = [
   "I'm tired of doing my job! Now I want you to listen to my dream! 😱🩲⁉️🤨🙋‍♂️🙋‍♂️🙋‍♂️⛔️🧞‍♂️✅",
   "I'm tired of doing my job! Now I want you to listen to my dream! 🏙️🖥️📉📅😔👀🪟🐥🪹👯",
   "I'm tired of doing my job! Now I want you to listen to my dream! 🖼️💎💰🏦🧙‍♂️🪄🥒🥕🌽🏦",
-  "I'm tired of doing my job! Now I want you to listen to my dream! 😤🏃‍♀️⛰️🫣👀🌊🐟🔫🔫🔫"
+  "I'm tired of doing my job! Now I want you to listen to my dream! 😤🏃‍♀️⛰️🫣👀🌊🐟🔫🔫🔫",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🤡🫵😹😹😹💀💄🫦👮‍♀️👩‍✈️",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🐇🤝🦫🐾🌒💫🩸⁉️⁉️⁉️",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🚕🚕🚕🗣🗣🫵👊👊🫨😜😹",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🤟🤠🌪🌪🌪🇺🇸🏋🏋🏋🫦",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 😭😭😭😭😭💀💀😭😭😭🎓",
+  "I'm tired of doing my job! Now I want you to listen to my dream! ✈️🏖🏝🌊🌊🌊🦧🦁🐨👨‍👩‍👧‍👧",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🃏🎩🕊🧙‍♀️👏👏👏🎩🍗⁉️⁉️",
+  "I'm tired of doing my job! Now I want you to listen to my dream! 🔊🏁🚜🛵🏍🚨👀👀👀🚔⛔️👹",
+
+
 ];
 
 function setup() {
